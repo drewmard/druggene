@@ -138,8 +138,8 @@ flip_reverse <- function(ss,sub_impute) {
   return(ss.matched)
 }
 ss <- flip_reverse(ss,sub_impute)
-
 system(paste0("echo alleles: flipping, reversing, and removing mismatches ss: ", nrow(ss), " >> ", dir, "/clean.log"))
+
 
 f.out <- paste0(dir, "/clean_", tolower(author), ".txt")
 fwrite(ss, paste0(dir, "/clean_", tolower(author), ".txt"), row.names = F, col.names = T, sep = '\t', quote = F,na = 'NA')

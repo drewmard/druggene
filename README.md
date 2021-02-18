@@ -22,7 +22,10 @@ Directory: scripts/create_score_PGS_catalog
 	Note: use scripts/create_score/impute_snp.sh as a pre-processing first step
 
 #### 2. QC the summary statistics file.
-*Option 1: PGS_catalog_process.R:* 
+**Option 1:** PGS_catalog_process.R
+**Option 2:** PGS_catalog_process.no_remove.R
+
+The PGS catalog statistics can be processed using a full QC pipeline, or a QC pipeline that prevents removal of SNPs.
 
 #### 3. 
 scoring_file.PGS_catalog.sh

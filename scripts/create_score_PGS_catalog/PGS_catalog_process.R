@@ -2,8 +2,8 @@ library(data.table)
 library("dplyr")
 
 # parameters
-# author <- 'PGS000004'; use_col <- c(1:5)
-author <- 'PGS000007'; use_col <- c(1:5)
+author <- 'PGS000004'; use_col <- c(1:5)
+# author <- 'PGS000007'; use_col <- c(1:5)
 # author <- 'PGS000008'
 # author <- 'PGS000009'
 # author <- 'PGS000082'; use_col <- c(2:6)
@@ -11,9 +11,9 @@ author <- 'PGS000007'; use_col <- c(1:5)
 origdir <- '/athena/elementolab/scratch/anm2868/druggene'
 
 # initialize
-ss.full <- fread(paste0(origdir,'/output/ss/',author,'/','raw_',tolower(author),'.ss.gz'),data.table = F,stringsAsFactors = F)
-impute <- fread(paste0(origdir,'/output/ukb/impute_rsids'), header = F, stringsAsFactors = F,data.table = F)
-colnames(impute) <- c("LOC", "SNP", "POS", "A1", "A2", "MAF", "AX", "INFO","CHR")
+ss.full <- fread(paste0(origdir,'/output/ss/',author,'/',(author),'.txt.gz'),data.table = F,stringsAsFactors = F)
+# impute <- fread(paste0(origdir,'/output/ukb/impute_rsids'), header = F, stringsAsFactors = F,data.table = F)
+# colnames(impute) <- c("LOC", "SNP", "POS", "A1", "A2", "MAF", "AX", "INFO","CHR")
 
 dir <- paste0(origdir,'/output/ss/',author)
 system(paste0("mkdir -p ",dir))

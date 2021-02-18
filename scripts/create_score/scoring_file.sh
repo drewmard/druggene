@@ -3,11 +3,12 @@
 
 source activate PGS
 
-PTHRES=0.0005
-R2THRES=0.1
-KBTHRES=250
+# PTHRES=0.0005
+# R2THRES=0.1
+# KBTHRES=250
 author=michailidou
 genoDir=/home/kulmsc/athena/ukbiobank/imputed
+brit_eid=/athena/elementolab/scratch/anm2868/druggene/output/ukb/brit_eid
 
 myDir=/athena/elementolab/scratch/anm2868/druggene/output/ss/${author}
 mkdir -p $myDir
@@ -47,7 +48,7 @@ cut -f5 ${myDir}/ss > ${myDir}/rsids
 /home/kulmsc/bin/bgenix -g ${genoDir}/${genoName}.bgen -incl-rsids ${myDir}/rsids > ${myDir}/temp.bgen
   	
 # turn into a plink file, keeping only british european individuals
-plink2 --memory 12000 --threads 12 --bgen ${myDir}/temp.bgen ref-first --sample ${genoDir}/${genoName}.sample --keep-fam ${myDir}/brit_eid --make-bed --out ${myDir}/geno.${chr}
+plink2 --memory 12000 --threads 12 --bgen ${myDir}/temp.bgen ref-first --sample ${genoDir}/${genoName}.sample --keep-fam $brit_eid --make-bed --out ${myDir}/geno.${chr}
 
 done
 
@@ -61,9 +62,9 @@ for chr in {1..22};do
 zcat ${myDir}/chr_ss/${author}_${chr}.ss.gz > ${myDir}/ss
 
 # for PTHRES in 0.05 0.005 0.0005 0.00001 5e-8; do
-for PTHRES in 0.0005 0.00001 5e-8; do
+for PTHRES in 0.05 0.005; do
 for R2THRES in 0.1; do
-for KBTHRES in 250 5000; do
+for KBTHRES in 250; do
 
 echo "Clumping chr $chr summary statistics..."
 
@@ -82,18 +83,24 @@ done
 #######################################################################################
 # 4:
 # Compute polygenic scores:
-mkdir -p ${myDir}/score
+# mkdir -p ${myDir}/score
 for chr in {1..22};do
+# for chr in {22..22};do
 
 echo "Scoring chr $chr..."
 zcat ${myDir}/chr_ss/${author}_${chr}.ss.gz > ${myDir}/ss
 genoName=ukbb.${chr}
 
-for PTHRES in 0.0005 0.00001 5e-8; do
+for PTHRES in 0.05 0.005; do
 for R2THRES in 0.1; do
-for KBTHRES in 250 5000; do
+for KBTHRES in 250; do
 
-mkdir -p ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}
+# for PTHRES in 0.0005 0.00001 5e-8; do
+# for R2THRES in 0.1; do
+# for KBTHRES in 250 5000; do
+
+
+mkdir -p ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}
 
 # # use bgenix to subset snps from large ukb imputed file 
 # /home/kulmsc/bin/bgenix -g ${genoDir}/${genoName}.bgen -incl-rsids ${myDir}/clumped/rsid.${chr} > ${myDir}/temp_v2.bgen
@@ -101,11 +108,11 @@ mkdir -p ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}
 # # turn into a plink file, keeping only british european individuals
 # plink2 --memory 12000 --threads 12 --bgen ${myDir}/temp_v2.bgen ref-first --sample ${genoDir}/${genoName}.sample --keep-fam ${myDir}/brit_eid --make-bed --out ${myDir}/geno.${chr}.v2
 
-plink2 --memory 12000 --threads 12 --bfile ${myDir}/geno.${chr} --keep-fam ${myDir}/brit_eid --extract ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/rsid.${chr} --make-bed --out ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/geno.${chr}.v2
+plink2 --memory 12000 --threads 12 --bfile ${myDir}/geno.${chr} --keep-fam $brit_eid --extract ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/rsid.${chr} --make-bed --out ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/geno.${chr}.v2
 
 # perform scoring
-plink --bfile ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/geno.${chr}.v2 --keep-allele-order --score ${myDir}/ss 3 4 7 sum --out ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chr${chr}
-rm ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/geno.${chr}.v2.{bed,bim,fam} # waste of space
+plink --bfile ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/geno.${chr}.v2 --keep-allele-order --score ${myDir}/ss 5 3 7 sum --out ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chr${chr}
+rm ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/geno.${chr}.v2.{bed,bim,fam} # waste of space
 
 done
 done
@@ -116,18 +123,19 @@ done
 # 5:
 # Combine polygenic scores on chromosome level into one file:
 
-for PTHRES in 0.0005 0.00001 5e-8; do
+for PTHRES in 0.05 0.005; do
 for R2THRES in 0.1; do
-for KBTHRES in 250 5000; do
+for KBTHRES in 250; do
 
+echo "PTHRES=${PTHRES}, R2THRES=${R2THRES}, KBTHRES=${KBTHRES}"
 chr=1
-awk -v OFS='\t' '{ print $2, $6 }' ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chr${chr}.profile > ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chrALL.profile
+awk -v OFS='\t' '{ print $2, $6 }' ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chr${chr}.profile > ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chrALL.profile
 for chr in {2..22}; do
 echo $chr
-awk '{ print $6 }' ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chr${chr}.profile > ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmp
-paste ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chrALL.profile ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmp > ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmpout && mv ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmpout ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chrALL.profile
+awk '{ print $6 }' ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chr${chr}.profile > ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmp
+paste ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chrALL.profile ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmp > ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmpout && mv ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmpout ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/score_chrALL.profile
 done
-rm ${myDir}/score/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmp
+rm ${myDir}/clumped/P_${PTHRES}.R2_${R2THRES}.KB_${KBTHRES}/tmp
 
 done
 done

@@ -5,15 +5,12 @@ library("dplyr")
 
 # parameters
 author <- 'PGS000004'; use_col <- c(1:5)
-author <- 'PGS000007'; use_col <- c(1:5)
+# author <- 'PGS000007'; use_col <- c(1:5)
 
 origdir <- '/athena/elementolab/scratch/anm2868/druggene'
 
 # initialize
 ss.full <- fread(paste0(origdir,'/output/ss/',author,'/',(author),'.txt.gz'),data.table = F,stringsAsFactors = F)
-impute <- fread(paste0(origdir,'/output/ukb/impute_rsids'), header = F, stringsAsFactors = F,data.table = F)
-colnames(impute) <- c("LOC", "SNP", "POS", "A1", "A2", "MAF", "AX", "INFO","CHR")
-
 dir <- paste0(origdir,'/output/ss/',author)
 fullFile=paste0(origdir,'/output/ukb/ukb_mfi_chrAll_v3.txt')
 f.out=paste0(origdir,'/output/ss/',author,'/for_grep')
@@ -33,6 +30,8 @@ ss <- merge(ss,sub_impute[,c('CHR','POS')],by.x=c('CHR','BP'),by.y=c('CHR','POS'
 ss$RSID <- sub_impute$SNP
 # system(paste0("echo match reference to ss: ", nrow(ss), " >> ", dir, "/clean.log"))
 
+# this is a different function than the other preprocess scripts
+# because ambiguous SNPs can create issues downstream
 flip_reverse <- function(ss,sub_impute) {
   flip_strand <- function(allele) {
     dplyr::case_when(
@@ -81,3 +80,5 @@ fwrite(ss, paste0(dir, "/clean_", author, ".no_remove.txt"), row.names = F, col.
 system(paste0("gzip -f ", dir, "/clean_", author, ".no_remove.txt"))
 fwrite(as.data.frame(ss$RSID),paste0(dir, "/", 'rsids.no_remove'),row.names = F, col.names = F, sep = '\t', quote = F,na = 'NA')
 
+system(paste0("echo original: ", nrow(ss.full), " > ", dir, "/clean.no_remove.log"))
+system(paste0("echo new: ", nrow(ss), " >> ", dir, "/clean.no_remove.log"))
