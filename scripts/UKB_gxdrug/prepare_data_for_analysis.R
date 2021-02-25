@@ -3,7 +3,13 @@ prepare_data_for_analysis <- function(j) {
   print(paste0('Disease ',j,'/',length(disease_lst),': ',disease_name))
   f <- paste0('/athena/elementolab/scratch/anm2868/DrugPGS/UKB_pheno_data/',disease_name,'.txt')
   df3 <- fread(f,data.table = F,stringsAsFactors = F)
-  df3 <- df3[!duplicated(df3$eid),]
+  #########
+  # A
+  # library(dplyr)
+  # df3 <- as.data.frame(df3 %>% group_by(eid) %>% slice(which.min(days)))
+  # B
+  # df3 <- df3[!duplicated(df3$eid),]
+  #########
   df4 <- merge(df3,drug_data,by='eid')
 
   if (disease_name %in% c('breast_cancer','ovarian_cancer')) {

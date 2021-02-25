@@ -1,14 +1,16 @@
-source activate PGS
+conda activate PGS
 
 # author=PGS000004; use_col="6 3 5" # hit A2
 author=PGS000007; use_col="6 3 5"
+author=PGS000333; use_col="6 3 5"
 
 genoDir=/home/kulmsc/athena/ukbiobank/imputed
 brit_eid=/athena/elementolab/scratch/anm2868/druggene/output/ukb/brit_eid
 
 myDir=/athena/elementolab/scratch/anm2868/druggene/output/ss/${author}
 
-for FLAG in ".no_remove" ""; do
+# for FLAG in ".no_remove" ""; do
+for FLAG in ""; do
 
 zcat $myDir/clean_${author}${FLAG}.txt.gz > $myDir/ss
 # Compute polygenic scores:
@@ -35,13 +37,15 @@ rm ${myDir}/geno.${chr}.{bed,bim,fam} # waste of space
 done
 done
 rm ${myDir}/temp.bgen # waste of space
+rm ${myDir}/ss
 
 
 #######################################################################################
 # 5:
 # Combine polygenic scores on chromosome level into one file:
 
-for FLAG in ".no_remove" ""; do
+# for FLAG in ".no_remove" ""; do
+for FLAG in ""; do
 
 chr=1
 awk -v OFS='\t' '{ print $2, $6 }' ${myDir}/score_chr${chr}${FLAG}.profile > ${myDir}/score_chrALL${FLAG}.profile
