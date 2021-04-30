@@ -23,6 +23,4 @@ g <-ggplot(cor_df,aes(Var1,Var2,fill=value)) +
   # coord_fixed() +
   labs(title='Polygenic score correlations');g
 
-with(mtcars, corrplot(cor(cbind(disp, hp, cyl)), cl.lim = c(0.7, 1), is.corr = FALSE))
 
-?corrplot
