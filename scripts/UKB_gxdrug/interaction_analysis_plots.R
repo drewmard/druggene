@@ -187,6 +187,7 @@ ggsurvplot(fit,
            fun = "event",xlab='Days')
 
 
+tmp <- fread("~/Documents/Research/druggene/output/pgs_drug_plusSNP.txt",data.table = F,stringsAsFactors = F)
 tmp1 <- subset(tmp,S01BA==1)
 fit <- survfit(Surv(days, disease) ~ pgs_strata, data = tmp1)
 g1 <- autoplot(fit,conf.int = FALSE, censor = FALSE) + theme_bw() + theme(panel.grid = element_blank()) +
