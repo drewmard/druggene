@@ -69,7 +69,6 @@ f.out <- '/athena/elementolab/scratch/anm2868/druggene/output/pgs_int/SNP_by_dru
 res.df.save.sub <- fread(f.out,data.table = F,stringsAsFactors = F,header = F)
 library(enrichR)
 dbs <- listEnrichrDbs()
-# dbs <- c("GO_Molecular_Function_2018", "GO_Cellular_Component_2018", "GO_Biological_Process_2018","LINCS_L1000_Ligand_Perturbations_up")
 enriched <- enrichr(res.df.save.sub$Gene, dbs$libraryName)
 res <- list()
 for (data_base in dbs$libraryName) {
@@ -81,14 +80,12 @@ for (data_base in dbs$libraryName) {
 res2 <- do.call(rbind,res)
 res2[order(res2$Adjusted.P.value)[1:5],]
 
-subset(res2,db=="ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X")
 data_base="ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X"
 tmp <- enriched[[data_base]]
 f.out <- paste0("/athena/elementolab/scratch/anm2868/druggene/output/pgs_int/snp_drug_enrichr_",data_base,".txt")
 fwrite(tmp,f.out,row.names = F,col.names = T,sep = '\t',na = "NA",quote=F)
 
 data_base="DSigDB"
-# tmp <- enriched[[data_base]]
 enriched <- as.data.frame(enrichr(res.df.save.sub[,1], data_base))
 library(stringr); enriched$num_gene <- str_count(enriched[,ncol(enriched)],';')+1
 tmp <- enriched[enriched$num_gene>=3,]
@@ -111,38 +108,4 @@ tmp <- tmp[num_gene>=3,]
 subset(tmp,Adjusted.P.value < 0.1)
 f.out <- paste0("/athena/elementolab/scratch/anm2868/druggene/output/pgs_int/snp_drug_enrichr_",data_base,".txt")
 fwrite(tmp,f.out,row.names = F,col.names = T,sep = '\t',na = "NA",quote=F)
-
-gregexpr(';',tmp[1,ncol(tmp)])
-head(tmp)
-
-# res2[grep("dexamethasone",res2$Term),]
-# res2[grep("corticosteroid",res2$Term),]
-res2[grep("mifepristone",res2$Term),]
-# res2[grep("ketoconazole",res2$Term),]
-# res2[grep("glucocorticoid",res2$Term),]
-
-tmp <- enrichr(res.df.save.sub$Gene, "GO_Biological_Process_2018")
-tmp <- as.data.frame(tmp)
-subset(tmp,tmp[,1] %in% c("corticosteroid receptor signaling pathway (GO:0031958)"))
-grep("corticosteroid",tmp[,1])
-subset(tmp,)
-
-# subset(res.df.save.sub,res.df.save.sub[,1]=='rs62119267')
-# i <- which(query[,1]=="rs62119267")
-
-
-
-
-
-
-
-# snp='rs10002408'
-# # expected input: 1_111770808_GT_G
-# res <- genesForVariant(snp)
-# res <- genesForVariant("1_111770808_GT_G")
-# res <- genesForVariant("4_182543945_T_C")
-
-
-
-
 
