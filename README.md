@@ -58,10 +58,7 @@ Creating genotype files for the single-SNP analysis using:
 
 #### In silico single-SNP functional analyses:
 
-Mapping SNPs to genes:
 	ukb-id_to_open-targets-id.sh
-	
-EnrichR:
 	enrichment_analysis.R
 	enrichr_analyses.R
 	gtex_snp.R
