@@ -1,7 +1,5 @@
+# Information about the repository
 # 
-# 
-## Information about the repository
-## 
 
 This directory contains all computer code to perform the analyses
 from our upcoming manuscript, "A polygenic score-based approach
