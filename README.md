@@ -39,7 +39,6 @@ Please see the create_score and create_score_PGS_catalog directories.
 #### Polygenic-drug interaction tests
 
 	pgs_drug_gxdrug.R
-	\\ interaction_analysis.R
 	pgs_qq.R
 	variation_explained_by_gxdrug.R
 	pgs_variation_explained.R
