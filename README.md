@@ -5,7 +5,7 @@ This directory contains all computer code to perform the analyses
 from our upcoming manuscript, "A polygenic score-based approach
 to identify gene-drug interactions stratifying breast cancer risk".
 
-**Please note that the scripts are mostly uncommented and not in clean formats. For me, this serves as a repository to access any relevant scripts. Hopefully, this is suitable for other researchers as well.**
+**June 14, 2021: Please note that the scripts could use further commenting and documentation. This is on the to-do list. Currently, this mostly serves as a repository for myself to access any relevant scripts but other researchers can access these scripts in their current format as well.**
 
 All scripts are written in the R or Bash programming languages. The analysis was performed on a linux system. Plots were created on a macOS Catalina system.
 
